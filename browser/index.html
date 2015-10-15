@@ -11,9 +11,13 @@
 	<script src="/js/controllers/album.js"></script>
 	<script src="/js/controllers/player.js"></script>
 	<script src="/js/controllers/multiAlbum.js"></script>
+	<script src="/js/controllers/artists.js"></script>
+	<script src="/js/controllers/artist.js"></script>
 	<script src="/js/controllers/sidebar.js"></script>
 	<script src="/js/factories/stats.js"></script>
 	<script src="/js/factories/player.js"></script>
+	<script src="/js/factories/promise.js"></script>
+	<script src="/js/factories/navigation.js"></script>
 
 </head>
 <body ng-app="juke">
@@ -26,11 +30,64 @@
 						<a ng-click="viewAlbums()" href="#">ALBUMS</a>
 					</h5>
 				</section>
+				<section>
+			    <h5 class="playlist-item">
+			        <a ng-click="viewArtists()" href="#">ARTISTS</a>
+			    </h5>
+				</section>
 			</sidebar>
-		</div>
+		</div><!-- SIDEBAR -->
 
 		<div class="col-xs-10">
-			<div class="album" ng-controller="AlbumCtrl">
+
+			<div ng-controller="artistsCtrl" ng-show="getShow('artists')">
+		    <h3>Artists</h3>
+	    	<div class="list-group">
+        	<div class="list-group-item" ng-repeat="artist in artists">
+            	<a ng-click='viewArtist(artist._id)'>{{ artist.name }}</a>
+        	</div>
+	    	</div>
+			</div>
+			<div ng-controller="artistCtrl" ng-show="getShow('artist')">
+    		<h3>{{ artist.name }}</h3>
+    		<h4>ALBUMS</h4>
+    		<div ng-repeat="album in albums" class="col-xs-4">
+           <div class="thumbnail">
+              <img ng-src="/api/albums/{{album._id}}.image">
+              <div class="caption">
+                <h5>
+                  <a ng-click='viewAlbum(album._id)'>{{album.name}}</a>
+                </h5>
+                <small>{{album.songs.length}}</small>
+              </div>
+           </div>
+        </div>
+    		<table class='table'>
+    			<h4>SONGS</h4>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Name</th>
+							<th>Artists</th>
+							<th>Genres</th>
+						</tr>
+					</thead>
+	    		<tbody>
+							<tr ng-repeat="song in songs" ng-class="{active: currentSong() === song}">
+								<td>
+									<button ng-hide="currentSong() === song" ng-click="start(song)" class="btn btn-default btn-xs">
+										<span class="glyphicon glyphicon-play"></span>
+									</button>
+								</td>
+								<td>{{ song.name }}</td>
+								<td><span ng-repeat="artist in song.artists">{{ artist.name }} </span></td>
+								<td>{{ song.genres.join(', ') }}</td>
+							</tr>
+					</tbody>
+				</table>
+			</div><!-- artistCTRL -->
+
+			<div class="album" ng-controller="AlbumCtrl" ng-show="getShow('album')">
 				<p>
 					<h3>{{ album.name }}<span> {{album.albumDuration}}</span></h3>
 					<img ng-src="{{ album.imageUrl }}" class="img-thumbnail">
@@ -57,23 +114,26 @@
 						</tr>
 					</tbody>
 				</table>
-			</div>
-			<div>
-	    <h3>Albums</h3>
-	    <div ng-show="showAlbums" ng-controller="multiAlbumCtrl" class="row">
+			</div><!-- SINGLE ALBUM VIEW -->
+
+			<div ng-show="getShow('albums')" ng-controller="multiAlbumCtrl">
+	    	<h3>Albums</h3>
+	    	<div class="row">
 	        <div ng-repeat="album in albums" class="col-xs-4">
-	            <div class="thumbnail">
-	                <img ng-src="/api/albums/{{album._id}}.image">
-	                <div class="caption">
-	                    <h5>
-	                        <a ng-click='viewAlbum(album._id)'>{{album.name}}</a>
-	                    </h5>
-	                    <small>{{album.songs.length}}</small>
-	                </div>
+	           <div class="thumbnail">
+	              <img ng-src="/api/albums/{{album._id}}.image">
+	              <div class="caption">
+	                <h5>
+	                  <a ng-click='viewAlbum(album._id)'>{{album.name}}</a>
+	                </h5>
+	                <small>{{album.songs.length}}</small>
+	              </div>
 	            </div>
-	        </div>
-			</div> <!-- MULTI ALBUM VIEW -->
-		</div> <!-- SINGLE ALBUM VIEW -->
+	        	</div>
+					</div> 
+				</div><!-- MULTI ALBUM VIEW -->
+
+			</div><!-- COLLUMN --> 
 
 		<footer>
 			<div ng-controller="PlayerCtrl" ng-show="currentSong()">

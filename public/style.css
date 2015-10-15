@@ -46,3 +46,7 @@ footer {
 
 .album img {
   height: 300px; }
+
+h4 {
+  clear:left;
+}

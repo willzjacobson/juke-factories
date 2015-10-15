@@ -1,16 +1,12 @@
-app.controller('multiAlbumCtrl', function ($scope, $rootScope, PlayerFactory) {
+app.controller('multiAlbumCtrl', function ($scope, $rootScope, promiseFactory, navigationFactory) {
 
 	$rootScope.$on('viewAlbums', function(moose, data) {
-		PlayerFactory.promiseForAlbums().then(function(albums) {
+		promiseFactory.promiseForAlbums().then(function(albums) {
 			$scope.albums = albums;
-			$scope.showAlbums = true;
 		});
 	});
 	
-	$scope.viewAlbum = function(id) {
-		$scope.showAlbums = false;
-		$rootScope.$broadcast('viewSingleAlbum', id);
-		console.log('IIIDDDD', id);
-	};
+	$scope.viewAlbum = navigationFactory.viewAlbum;
+	$scope.getShow = navigationFactory.getShow;
 
 });

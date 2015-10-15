@@ -1,12 +1,11 @@
-app.controller('AlbumCtrl', function ($scope, $http, $rootScope, PlayerFactory) {
+app.controller('AlbumCtrl', function ($scope, $rootScope, PlayerFactory, promiseFactory, navigationFactory) {
 
-	$scope.singleAlbumShow = false;
+	$scope.getShow = navigationFactory.getShow;
 
-	$rootScope.$on('viewSingleAlbum', function(moose, albumId) {
-		PlayerFactory.promiseAlbumInfo(albumId).then(function(album) {
+	$rootScope.$on('viewAlbum', function(moose, albumId) {
+		promiseFactory.promiseAlbumInfo(albumId).then(function(album) {
 			$scope.album = album;
 			PlayerFactory.songs = $scope.album.songs;
-			$scope.singleAlbumShow = false;
 		});
 	});
 
